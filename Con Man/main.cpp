@@ -6,10 +6,11 @@
 //  Copyright © 2017 James Carter. All rights reserved.
 //
 
-#include <iostream>
+#include "easylogging++.h"
+
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    LOG(INFO) << "Con Man started!";
     return 0;
 }

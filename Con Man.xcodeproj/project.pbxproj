@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1A16E4B61E79F39D0068212B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A16E4B51E79F39D0068212B /* main.cpp */; };
+		1A16E4BF1E79F5860068212B /* easylogging++.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1A16E4BD1E79F5860068212B /* easylogging++.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,8 @@
 /* Begin PBXFileReference section */
 		1A16E4B21E79F39D0068212B /* Con Man */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Con Man"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A16E4B51E79F39D0068212B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		1A16E4BD1E79F5860068212B /* easylogging++.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "easylogging++.cc"; sourceTree = "<group>"; };
+		1A16E4BE1E79F5860068212B /* easylogging++.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "easylogging++.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,9 +60,19 @@
 		1A16E4B41E79F39D0068212B /* Con Man */ = {
 			isa = PBXGroup;
 			children = (
+				1A16E4BC1E79F55D0068212B /* easylogging */,
 				1A16E4B51E79F39D0068212B /* main.cpp */,
 			);
 			path = "Con Man";
+			sourceTree = "<group>";
+		};
+		1A16E4BC1E79F55D0068212B /* easylogging */ = {
+			isa = PBXGroup;
+			children = (
+				1A16E4BE1E79F5860068212B /* easylogging++.h */,
+				1A16E4BD1E79F5860068212B /* easylogging++.cc */,
+			);
+			name = easylogging;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -120,6 +133,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A16E4B61E79F39D0068212B /* main.cpp in Sources */,
+				1A16E4BF1E79F5860068212B /* easylogging++.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
