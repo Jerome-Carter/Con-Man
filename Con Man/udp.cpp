@@ -45,6 +45,16 @@ namespace Con_Man {
                 LOG(DEBUG) << "Socket at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port) << " closed";
         }
     }
+    void UDP::disable(const int& level) {
+        if (level > -1 && level < 4) shutdown(m_FileDescriptor, level);
+        if (level == 0) {
+            LOG(DEBUG) << "Socket at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port) << " may no longer receive data";
+        } else if (level == 1) {
+            LOG(DEBUG) << "Socket at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port) << " may no longer send data";
+        } else if (level == 2) {
+            LOG(DEBUG) << "Socket at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port) << " may no longer send or receive data";
+        }
+    }
     void UDP::send(const char*& data) const {
         if (m_Running) {
             std::thread tSend([this, data] () {
@@ -78,12 +88,16 @@ namespace Con_Man {
     void UDP::listen(const std::function<void(char*)>& call) {
         if (m_Running && !m_Listening) {
             m_Listening = true;
+            LOG(INFO) << "Now listening at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port);
             std::thread tListen([this, &call](){
                 while (m_Listening) {
                     receive(call);
                 }
             });
             tListen.detach();
+        } else {
+            LOG(ERROR) << "Failed to initialize socket listener at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port);
+            LOG(INFO) << "Ensure that the socket is running and not already listening! ( R = " << m_Running << "; L = " << m_Listening << " )";
         }
     }
     void UDP::ignore() {

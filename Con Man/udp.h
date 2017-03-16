@@ -23,8 +23,8 @@
 namespace Con_Man {
     class UDP : public Socket {
     private:
-        bool m_Running;
-        bool m_Listening;
+        bool m_Running = false;
+        bool m_Listening = false;
         int m_FileDescriptor;
         struct sockaddr_in m_Address;
         struct sockaddr_in m_Recipient;
@@ -33,7 +33,7 @@ namespace Con_Man {
         UDP(std::string ip, unsigned short port);
         bool open() override;
         void close() override;
-        void disconnect(const int& level) override;
+        void disable(const int& level) override;
         void send(const char*& data) const override;
         void receive(const std::function<void(char*)>& call) override;
         void listen(const std::function<void(char*)> &call);
