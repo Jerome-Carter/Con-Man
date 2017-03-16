@@ -38,13 +38,14 @@ namespace Con_Man {
     void UDP::close() {
         if (m_Running) {
             m_Running = false;
+            if (m_Listening) m_Listening = false;
             if (::close(m_FileDescriptor) < 0)
                 LOG(ERROR) << "Failed to close socket!";
             else
                 LOG(DEBUG) << "Socket at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port) << " closed";
         }
     }
-    void UDP::send(const char* data) const {
+    void UDP::send(const char*& data) const {
         if (m_Running) {
             std::thread tSend([this, data] () {
                 char* msg = (char*)std::string(std::string(data) + TERMINATION_CHAR).c_str();

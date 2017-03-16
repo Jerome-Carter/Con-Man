@@ -18,6 +18,8 @@
 
 #define TERMINATION_CHAR "|0"
 
+// TODO: Add apropriate getters and setters
+
 namespace Con_Man {
     class UDP : public Socket {
     private:
@@ -31,7 +33,8 @@ namespace Con_Man {
         UDP(std::string ip, unsigned short port);
         bool open() override;
         void close() override;
-        void send(const char* data) const override;
+        void disconnect(const int& level) override;
+        void send(const char*& data) const override;
         void receive(const std::function<void(char*)>& call) override;
         void listen(const std::function<void(char*)> &call);
         void ignore();
