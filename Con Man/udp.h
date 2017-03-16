@@ -21,7 +21,8 @@
 namespace Con_Man {
     class UDP : public Socket {
     private:
-        bool m_Status;
+        bool m_Running;
+        bool m_Listening;
         int m_FileDescriptor;
         struct sockaddr_in m_Address;
         struct sockaddr_in m_Recipient;
@@ -32,5 +33,7 @@ namespace Con_Man {
         void close() override;
         void send(const char* data) const override;
         void receive(const std::function<void(char*)>& call) override;
+        void listen(const std::function<void(char*)> &call);
+        void ignore();
     };
 }

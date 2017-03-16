@@ -32,46 +32,60 @@ namespace Con_Man {
             return false;
         }
         LOG(DEBUG) << "Socket now open on " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port);
-        m_Status = true;
+        m_Running = true;
         return true;
     }
     void UDP::close() {
-        if (m_Status) {
-            m_Status = false;
+        if (m_Running) {
+            m_Running = false;
             if (::close(m_FileDescriptor) < 0)
                 LOG(ERROR) << "Failed to close socket!";
             else
-                LOG(INFO) << "Socket closed";
+                LOG(DEBUG) << "Socket at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port) << " closed";
         }
     }
     void UDP::send(const char* data) const {
-        if (m_Status) {
+        if (m_Running) {
             std::thread tSend([this, data] () {
                 char* msg = (char*)std::string(std::string(data) + TERMINATION_CHAR).c_str();
                 long bytes_sent;
                 unsigned long len = std::strlen(msg);
                 if ((bytes_sent = sendto(m_FileDescriptor, msg, len, 0, (struct sockaddr*)&m_Recipient, sizeof(struct sockaddr))) < 0) {
-                    if (m_Status) {
-                        perror("Failed to send data");
+                    if (m_Running) {
+                        LOG(ERROR) << "Failed to send data: " << strerror(errno);
                     }
                 }
             });
             tSend.detach();
         }
     }
-    void UDP::receive(const std::function<void (char *)> &call) {
-        if (m_Status) {
+    void UDP::receive(const std::function<void(char*)> &call) {
+        if (m_Running) {
             char data[1024];
             long bytes_recved;
             socklen_t addr_len = sizeof(m_Recipient);
             if ((bytes_recved = recvfrom(m_FileDescriptor, data, sizeof(data), 0, (struct sockaddr*)&m_Recipient, &addr_len)) < 0) {
-                if (m_Status) {
-                    perror("Failed to receive data");
+                if (m_Running) {
+                    LOG(ERROR) << "Failed to receive data: " << strerror(errno);
                 }
             }
             m_ReceivedMessages.push_back(data);
             call(data);
             bzero(data, 1024);
         }
+    }
+    void UDP::listen(const std::function<void(char*)>& call) {
+        if (m_Running && !m_Listening) {
+            m_Listening = true;
+            std::thread tListen([this, &call](){
+                while (m_Listening) {
+                    receive(call);
+                }
+            });
+            tListen.detach();
+        }
+    }
+    void UDP::ignore() {
+        m_Listening = false;
     }
 }
