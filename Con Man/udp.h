@@ -19,6 +19,7 @@
 #define TERMINATION_CHAR "|0"
 
 // TODO: Add apropriate getters and setters
+// TODO: Set recepient / get recepient
 
 namespace Con_Man {
     class UDP : public Socket {
@@ -38,5 +39,6 @@ namespace Con_Man {
         void receive(const std::function<void(char*)>& call) override;
         void listen(const std::function<void(char*)> &call);
         void ignore();
+        std::string hostAndPort() const;
     };
 }

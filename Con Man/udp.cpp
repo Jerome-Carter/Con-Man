@@ -31,7 +31,7 @@ namespace Con_Man {
             LOG(ERROR) << "Failed to bind socket: " << strerror(errno);
             return false;
         }
-        LOG(DEBUG) << "Socket now open on " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port);
+        LOG(DEBUG) << "Socket now open on " << hostAndPort();
         m_Running = true;
         return true;
     }
@@ -42,18 +42,19 @@ namespace Con_Man {
             if (::close(m_FileDescriptor) < 0)
                 LOG(ERROR) << "Failed to close socket!";
             else
-                LOG(DEBUG) << "Socket at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port) << " closed";
+                LOG(DEBUG) << "Socket at " << hostAndPort() << " closed";
         }
     }
     void UDP::disable(const int& level) {
-        if (level > -1 && level < 4) shutdown(m_FileDescriptor, level);
-        if (level == 0) {
-            LOG(DEBUG) << "Socket at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port) << " may no longer receive data";
-        } else if (level == 1) {
-            LOG(DEBUG) << "Socket at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port) << " may no longer send data";
-        } else if (level == 2) {
-            LOG(DEBUG) << "Socket at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port) << " may no longer send or receive data";
-        }
+        if (level > -1 && level < 3) {
+            shutdown(m_FileDescriptor, level);
+            if (level == 0)
+                LOG(DEBUG) << "Socket at " << hostAndPort() << " may no longer receive data";
+            else if (level == 1)
+                LOG(DEBUG) << "Socket at " << hostAndPort() << " may no longer send data";
+            else if (level == 2)
+                LOG(DEBUG) << "Socket at " << hostAndPort() << " may no longer send or receive data";
+        } else LOG(WARNING) << "";
     }
     void UDP::send(const char*& data) const {
         if (m_Running) {
@@ -88,7 +89,7 @@ namespace Con_Man {
     void UDP::listen(const std::function<void(char*)>& call) {
         if (m_Running && !m_Listening) {
             m_Listening = true;
-            LOG(INFO) << "Now listening at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port);
+            LOG(INFO) << "Now listening at " << hostAndPort();
             std::thread tListen([this, &call](){
                 while (m_Listening) {
                     receive(call);
@@ -96,11 +97,14 @@ namespace Con_Man {
             });
             tListen.detach();
         } else {
-            LOG(ERROR) << "Failed to initialize socket listener at " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port);
+            LOG(ERROR) << "Failed to initialize socket listener at " << hostAndPort();
             LOG(INFO) << "Ensure that the socket is running and not already listening! ( R = " << m_Running << "; L = " << m_Listening << " )";
         }
     }
     void UDP::ignore() {
         m_Listening = false;
+    }
+    std::string UDP::hostAndPort() const {
+        return std::to_string(*inet_ntoa(m_Address.sin_addr)) + ":" + std::to_string(ntohs(m_Address.sin_port));
     }
 }
