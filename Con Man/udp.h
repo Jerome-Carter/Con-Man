@@ -9,11 +9,14 @@
 #pragma once
 
 #include <vector>
+#include <thread>
 #include <iostream>
 #include <unistd.h>
 
 #include "socket.h"
 #include "easylogging++.h"
+
+#define TERMINATION_CHAR "|0"
 
 namespace Con_Man {
     class UDP : public Socket {
@@ -28,6 +31,6 @@ namespace Con_Man {
         bool open() override;
         void close() override;
         void send(const char* data) const override;
-        void receive(const std::function<void(char*)>& call) const override;
+        void receive(const std::function<void(char*)>& call) override;
     };
 }

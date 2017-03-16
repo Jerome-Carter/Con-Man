@@ -32,6 +32,7 @@ namespace Con_Man {
             return false;
         }
         LOG(DEBUG) << "Socket now open on " << inet_ntoa(m_Address.sin_addr) << ":" << ntohs(m_Address.sin_port);
+        m_Status = true;
         return true;
     }
     void UDP::close() {
@@ -44,9 +45,33 @@ namespace Con_Man {
         }
     }
     void UDP::send(const char* data) const {
-
+        if (m_Status) {
+            std::thread tSend([this, data] () {
+                char* msg = (char*)std::string(std::string(data) + TERMINATION_CHAR).c_str();
+                long bytes_sent;
+                unsigned long len = std::strlen(msg);
+                if ((bytes_sent = sendto(m_FileDescriptor, msg, len, 0, (struct sockaddr*)&m_Recipient, sizeof(struct sockaddr))) < 0) {
+                    if (m_Status) {
+                        perror("Failed to send data");
+                    }
+                }
+            });
+            tSend.detach();
+        }
     }
-    void UDP::receive(const std::function<void (char *)> &call) const {
-        
+    void UDP::receive(const std::function<void (char *)> &call) {
+        if (m_Status) {
+            char data[1024];
+            long bytes_recved;
+            socklen_t addr_len = sizeof(m_Recipient);
+            if ((bytes_recved = recvfrom(m_FileDescriptor, data, sizeof(data), 0, (struct sockaddr*)&m_Recipient, &addr_len)) < 0) {
+                if (m_Status) {
+                    perror("Failed to receive data");
+                }
+            }
+            m_ReceivedMessages.push_back(data);
+            call(data);
+            bzero(data, 1024);
+        }
     }
 }
