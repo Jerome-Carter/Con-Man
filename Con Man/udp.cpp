@@ -21,7 +21,6 @@ namespace Con_Man {
         m_Recipient.sin_addr.s_addr = inet_addr(ip.c_str());
         m_Recipient.sin_port = htons(port);
         LOG(DEBUG) << "Socket(" << getAddress() << ") recipient set to " << getRecepientAddress();
-
     }
     bool UDP::open() {
         if ((m_FileDescriptor = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
@@ -55,7 +54,7 @@ namespace Con_Man {
     }
     void UDP::disable(const int& level) {
         if (level > -1 && level < 3) {
-            if (m_Listening) m_Listening = false;
+            if ((level == 1 || level == 2) && m_Listening) m_Listening = false;
             shutdown(m_FileDescriptor, level);
             if (level == 0)
                 LOG(DEBUG) << "Socket at " << getAddress() << " may no longer receive data";

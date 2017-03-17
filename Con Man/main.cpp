@@ -15,7 +15,7 @@ using namespace Con_Man;
 
 int main(int argc, const char * argv[]) {
     LOG(INFO) << "Con Man started!";
-    Con_Man::UDP udp_socket("0", 1722);
+    Con_Man::UDP udp_socket("0", 0);
     udp_socket.open();
     udp_socket.listen([](char* data){
         LOG(INFO) << "Data received: " << data;
