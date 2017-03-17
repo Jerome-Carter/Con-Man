@@ -32,6 +32,7 @@
 		1A16E4C51E7A00F50068212B /* socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = socket.h; sourceTree = "<group>"; };
 		1A16E4C61E7A1EDA0068212B /* udp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = udp.cpp; sourceTree = "<group>"; };
 		1A16E4C71E7A1EDA0068212B /* udp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = udp.h; sourceTree = "<group>"; };
+		1A16E4C91E7B6FE20068212B /* recipient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = recipient.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +87,7 @@
 				1A16E4C51E7A00F50068212B /* socket.h */,
 				1A16E4C71E7A1EDA0068212B /* udp.h */,
 				1A16E4C61E7A1EDA0068212B /* udp.cpp */,
+				1A16E4C91E7B6FE20068212B /* recipient.h */,
 			);
 			name = src;
 			sourceTree = "<group>";

@@ -9,11 +9,19 @@
 #include "udp.h"
 
 namespace Con_Man {
-    UDP::UDP(std::string ip, unsigned short port) {
+    UDP::UDP(const std::string& ip, const unsigned short& port) {
         memset((void*)&m_Address, 0, sizeof(m_Address));
         m_Address.sin_family = AF_INET;
         m_Address.sin_addr.s_addr = inet_addr(ip.c_str());
         m_Address.sin_port = htons(port);
+    }
+    void UDP::setRecepient(const std::string& ip, const unsigned short& port) {
+        memset((void*)&m_Recipient, 0, sizeof(m_Recipient));
+        m_Recipient.sin_family = AF_INET;
+        m_Recipient.sin_addr.s_addr = inet_addr(ip.c_str());
+        m_Recipient.sin_port = htons(port);
+        LOG(DEBUG) << "Socket(" << getAddress() << ") recipient set to " << getRecepientAddress();
+
     }
     bool UDP::open() {
         if ((m_FileDescriptor = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
@@ -31,7 +39,7 @@ namespace Con_Man {
             LOG(ERROR) << "Failed to bind socket: " << strerror(errno);
             return false;
         }
-        LOG(DEBUG) << "Socket now open on " << hostAndPort();
+        LOG(DEBUG) << "Socket now open on " << getAddress();
         m_Running = true;
         return true;
     }
@@ -42,19 +50,20 @@ namespace Con_Man {
             if (::close(m_FileDescriptor) < 0)
                 LOG(ERROR) << "Failed to close socket!";
             else
-                LOG(DEBUG) << "Socket at " << hostAndPort() << " closed";
+                LOG(DEBUG) << "Socket at " << getAddress() << " closed";
         }
     }
     void UDP::disable(const int& level) {
         if (level > -1 && level < 3) {
+            if (m_Listening) m_Listening = false;
             shutdown(m_FileDescriptor, level);
             if (level == 0)
-                LOG(DEBUG) << "Socket at " << hostAndPort() << " may no longer receive data";
+                LOG(DEBUG) << "Socket at " << getAddress() << " may no longer receive data";
             else if (level == 1)
-                LOG(DEBUG) << "Socket at " << hostAndPort() << " may no longer send data";
+                LOG(DEBUG) << "Socket at " << getAddress() << " may no longer send data";
             else if (level == 2)
-                LOG(DEBUG) << "Socket at " << hostAndPort() << " may no longer send or receive data";
-        } else LOG(WARNING) << "";
+                LOG(DEBUG) << "Socket at " << getAddress() << " may no longer send or receive data";
+        } else LOG(WARNING) << "Socket at " << getAddress() << " couldn't be disabled (invalid level provided)";
     }
     void UDP::send(const char*& data) const {
         if (m_Running) {
@@ -71,25 +80,27 @@ namespace Con_Man {
             tSend.detach();
         }
     }
-    void UDP::receive(const std::function<void(char*)> &call) {
+    void UDP::receive(const std::function<void(char*)>& call) {
         if (m_Running) {
-            char data[1024];
+            char buffer[1024];
             long bytes_recved;
             socklen_t addr_len = sizeof(m_Recipient);
-            if ((bytes_recved = recvfrom(m_FileDescriptor, data, sizeof(data), 0, (struct sockaddr*)&m_Recipient, &addr_len)) < 0) {
+            if ((bytes_recved = recvfrom(m_FileDescriptor, buffer, sizeof(buffer), 0, (struct sockaddr*)&m_Recipient, &addr_len)) < 0) {
                 if (m_Running) {
                     LOG(ERROR) << "Failed to receive data: " << strerror(errno);
                 }
             }
-            m_ReceivedMessages.push_back(data);
-            call(data);
-            bzero(data, 1024);
+            std::string data = std::string(buffer);
+            data.erase(remove(data.begin(), data.end(), ' '), data.end());
+            m_ReceivedMessages.push_back(buffer);
+            call(buffer);
+            bzero(buffer, 1024);
         }
     }
     void UDP::listen(const std::function<void(char*)>& call) {
         if (m_Running && !m_Listening) {
             m_Listening = true;
-            LOG(INFO) << "Now listening at " << hostAndPort();
+            LOG(INFO) << "Now listening at " << getAddress();
             std::thread tListen([this, &call](){
                 while (m_Listening) {
                     receive(call);
@@ -97,14 +108,8 @@ namespace Con_Man {
             });
             tListen.detach();
         } else {
-            LOG(ERROR) << "Failed to initialize socket listener at " << hostAndPort();
+            LOG(ERROR) << "Failed to initialize socket listener at " << getAddress();
             LOG(INFO) << "Ensure that the socket is running and not already listening! ( R = " << m_Running << "; L = " << m_Listening << " )";
         }
-    }
-    void UDP::ignore() {
-        m_Listening = false;
-    }
-    std::string UDP::hostAndPort() const {
-        return std::to_string(*inet_ntoa(m_Address.sin_addr)) + ":" + std::to_string(ntohs(m_Address.sin_port));
     }
 }
