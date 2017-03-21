@@ -11,6 +11,9 @@
 namespace Con_Man {
     namespace Adapters {
         namespace Socket {
+            UDP::UDP(::Con_Man::Socket::Address& address) {
+                m_Address = &address;
+            }
             UDP::UDP(const std::string& ip, const unsigned short& port) {
                 m_Address = new ::Con_Man::Socket::Address(ip, port);
             }
@@ -38,9 +41,7 @@ namespace Con_Man {
                     return false;
                 }
                 m_Address->setPort(ntohs(address.sin_port));
-                LOG(INFO) << ip << ":" << port;
-                LOG(INFO) << m_Address->getIp() << ":" << m_Address->getPort();
-                LOG(INFO) << inet_ntoa(address.sin_addr) << ":" << ntohs(address.sin_port);
+                LOG(INFO) << "Socket now open at " << m_Address->getIp() << ":" << m_Address->getPort();
                 m_Open = true;
                 return true;
             }

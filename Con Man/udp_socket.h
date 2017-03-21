@@ -32,7 +32,7 @@ namespace Con_Man {
                 bool m_Listening = false;
                 ::Con_Man::Socket::Address* m_Address;
             public:
-                UDP(const ::Con_Man::Socket::Address& address);
+                UDP(::Con_Man::Socket::Address& address);
                 UDP(const std::string& ip, const unsigned short& port);
                 ~UDP();
                 bool open();
@@ -44,6 +44,8 @@ namespace Con_Man {
                 void receive(const std::function<void(char*)>& call) const override;
                 void listen(const std::function<void(char*)> &call) override;
                 inline void ignore() override { m_Listening = false; };
+                inline bool isOpen() const override { return m_Open; };
+                inline bool isListening() const override { return m_Listening; };
                 inline std::string getIp() const override { return m_Address->getIp(); };
                 inline unsigned short getPort() const override { return m_Address->getPort(); };
             };

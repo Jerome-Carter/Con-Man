@@ -22,6 +22,8 @@ namespace Con_Man {
                 virtual void receive(const std::function<void(char*)>& call) const = 0;
                 virtual void listen(const std::function<void(char*)> &call) = 0;
                 virtual void ignore() = 0;
+                virtual bool isOpen() const = 0;
+                virtual bool isListening() const = 0;
                 virtual std::string getIp() const = 0;
                 virtual unsigned short getPort() const = 0;
             };
