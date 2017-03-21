@@ -77,20 +77,22 @@
 		1A16E4BC1E79F55D0068212B /* easylogging */ = {
 			isa = PBXGroup;
 			children = (
-				1A16E4BE1E79F5860068212B /* easylogging++.h */,
 				1A16E4BD1E79F5860068212B /* easylogging++.cc */,
+				1A16E4BE1E79F5860068212B /* easylogging++.h */,
 			);
 			name = easylogging;
+			path = easylogging;
 			sourceTree = "<group>";
 		};
 		1A16E4C01E79FC320068212B /* src */ = {
 			isa = PBXGroup;
 			children = (
 				1A16E4CA1E7CA1B10068212B /* adapters */,
-				1A16E4C91E7B6FE20068212B /* address.h */,
 				1A16E4CD1E7CCF8A0068212B /* address.cpp */,
+				1A16E4C91E7B6FE20068212B /* address.h */,
 			);
 			name = src;
+			path = src;
 			sourceTree = "<group>";
 		};
 		1A16E4CA1E7CA1B10068212B /* adapters */ = {
@@ -100,15 +102,17 @@
 				1A16E4CC1E7CA2380068212B /* socket.h */,
 			);
 			name = adapters;
+			path = adapters;
 			sourceTree = "<group>";
 		};
 		1A16E4CB1E7CA1D90068212B /* socket */ = {
 			isa = PBXGroup;
 			children = (
-				1A16E4CF1E7D93190068212B /* udp_socket.h */,
 				1A16E4D01E7D97400068212B /* udp_socket.cpp */,
+				1A16E4CF1E7D93190068212B /* udp_socket.h */,
 			);
 			name = socket;
+			path = socket;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
