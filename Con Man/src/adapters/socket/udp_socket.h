@@ -39,19 +39,24 @@ namespace Con_Man {
                 ~UDP();
                 bool open();
 
+                inline char* getMessage(const unsigned int& ID) const { return m_ReceivedMessages[ID]; }
+
                 inline void addRecipient(const ::Con_Man::Socket::Address& address) { m_Recipients.push_back(address); }
                 inline void addRecipient(const std::string& ip, const unsigned short& port) {m_Recipients.push_back(*new ::Con_Man::Socket::Address(ip, port)); }
                 inline ::Con_Man::Socket::Address getRecipient(const unsigned int& ID) const { return m_Recipients.at(ID); }
                 ::Con_Man::Socket::Address getRecipient(const std::string& ip, const unsigned short& port) const;
+                bool recipientExists(const std::string& ip, const unsigned short& port) const;
 
-                inline void receive_from(unsigned int ID, const std::function<void(char*)>& call) { receive_from(getRecipient(ID), call); }
+                inline void receive_from(const unsigned int& ID, const std::function<void(char*)>& call) { receive_from(getRecipient(ID), call); }
                 void receive_from(const ::Con_Man::Socket::Address& sender, const std::function<void(char*)>& call);
                 void receive_anon(const std::function<void(char*)>& call);
                 ::Con_Man::Socket::Address receive_unknown(const std::function<void(char*)>& call);
 
-                // TODO: send to all / send by addr / send by ID
-                // TODO: listen from
-                // TODO: get message
+                inline void send(const unsigned int& ID, const char*& data) const { send(m_Recipients.at(ID), data); }
+                void send(const ::Con_Man::Socket::Address& recipient, const char*& data) const;
+
+                inline void listen_to(const unsigned int& ID, const std::function<void(char*)> &call) { listen_to(m_Recipients.at(ID), call); }
+                void listen_to(const ::Con_Man::Socket::Address& sender, const std::function<void(char*)> &call);
                 
                 bool open(const std::string& ip, const unsigned short& port) override;
                 void disable(const unsigned int& level) override;

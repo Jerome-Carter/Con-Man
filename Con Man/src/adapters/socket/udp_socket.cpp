@@ -70,27 +70,30 @@ namespace Con_Man {
             void UDP::send(const char*& data) const {
                 if (m_Open) {
                     for (unsigned int ID = 0; ID < m_Recipients.size(); ID++) {
-                        if (m_Open) {
-                            std::thread tSend([this, ID, data] () {
-                                char* msg = (char*)data;
-                                long bytes_sent;
-                                unsigned long len = std::strlen(msg);
-                                sockaddr_in recipient = m_Recipients.at(ID).getAddress();
-                                if ((bytes_sent = sendto(m_FD, msg, len, 0, (struct sockaddr*)&recipient, sizeof(struct sockaddr))) < 0) {
-                                    if (m_Open) {
-                                        perror("Failed to send data");
-                                    }
-                                }
-                            });
-                            tSend.detach();
-                        }
+                        send(ID, data);
                     }
+                }
+            }
+            void UDP::send(const ::Con_Man::Socket::Address& recipient, const char*& data) const {
+                if (m_Open) {
+                    std::thread tSend([this, recipient, data] () {
+                        char* msg = (char*)data;
+                        long bytes_sent;
+                        unsigned long len = std::strlen(msg);
+                        sockaddr_in to = recipient.getAddress();
+                        if ((bytes_sent = sendto(m_FD, msg, len, 0, (struct sockaddr*)&to, sizeof(struct sockaddr))) < 0) {
+                            if (m_Open) {
+                                perror("Failed to send data");
+                            }
+                        }
+                    });
+                    tSend.detach();
                 }
             }
             void UDP::receive_from(const ::Con_Man::Socket::Address& sender, const std::function<void(char*)>& call) {
                 if (m_Open) {
                     char data[1024];
-                    ssize_t bytes_recved;
+                    long bytes_recved;
                     sockaddr_in address = sender.getAddress();
                     socklen_t addr_len = sizeof(address);
                     if ((bytes_recved = recvfrom(m_FD, data, sizeof(data), 0, (struct sockaddr*)&address, &addr_len)) < 0) {
@@ -133,8 +136,12 @@ namespace Con_Man {
                     m_ReceivedMessages.push_back(data);
                     call(data);
                     bzero(data, 1024);
+                    // if recip exists log and ret
                     ::Con_Man::Socket::Address address(from);
                     LOG(DEBUG) << "Data received from " << address.getAddressInfo();
+                    if (recipientExists(address.getIp(), address.getPort())) {
+                        return getRecipient(address.getIp(), address.getPort());
+                    }
                     addRecipient(address);
                     return address;
                 }
@@ -156,14 +163,38 @@ namespace Con_Man {
                     LOG(WARNING) << "Ensure that the socket is running and not already listening! ( STATUS: " << (m_Open ? "Open" : "Closed") << "; " << (m_Listening ? "Listening" : "Not Listening") << " )";
                 }
             }
+            void UDP::listen_to(const ::Con_Man::Socket::Address& sender, const std::function<void(char*)> &call) {
+                if (m_Open && !m_Listening) {
+                    m_Listening = true;
+                    LOG(DEBUG) << "Now listening at " << getIp() << ":" << getPort();
+                    std::thread tListen([this, sender, &call](){
+                        while (m_Listening) {
+                            receive_from(sender, call);
+                        }
+                    });
+                    tListen.detach();
+                } else{
+                    LOG(ERROR) << "Failed to initialize socket listener at " << getIp() << ":" << getPort();
+                    LOG(WARNING) << "Ensure that the socket is running and not already listening! ( STATUS: " << (m_Open ? "Open" : "Closed") << "; " << (m_Listening ? "Listening" : "Not Listening") << " )";
+                }
+            }
             ::Con_Man::Socket::Address UDP::getRecipient(const std::string& ip, const unsigned short& port) const {
-                for (unsigned int ID = 0; ID <= m_Recipients.size(); ID++) {
+                for (unsigned int ID = 0; ID < m_Recipients.size(); ID++) {
                     if ((m_Recipients[ID].getIp() == ip) && (m_Recipients[ID].getPort() == port)) {
                         return m_Recipients[ID];
                     }
                 }
                 LOG(ERROR) << "No recipients matching address " << ip << ":" << port;
                 return *new ::Con_Man::Socket::Address(NULL, NULL);
+            }
+            bool UDP::recipientExists(const std::string& ip, const unsigned short& port) const {
+                for (unsigned int ID = 0; ID < m_Recipients.size(); ID++) {
+                    if ((m_Recipients[ID].getIp() == ip) && (m_Recipients[ID].getPort() == port)) {
+                        return true;
+                    }
+                }
+                LOG(DEBUG) << "No recipients matching address " << ip << ":" << port;
+                return false;
             }
         }
     }
