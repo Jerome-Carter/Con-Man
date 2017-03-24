@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include "socket.h"
-#include "address.h"
+#include "../socket.h"
+#include "../../address.h"
 
-#include "easylogging++.h"
+#include "../../../easylogging/easylogging++.h"
 
 #include <thread>
 #include <unistd.h>
@@ -31,17 +31,33 @@ namespace Con_Man {
                 bool m_Open = false;
                 bool m_Listening = false;
                 ::Con_Man::Socket::Address* m_Address;
+                std::vector<char*> m_ReceivedMessages;
+                std::vector<::Con_Man::Socket::Address> m_Recipients;
             public:
                 UDP(::Con_Man::Socket::Address& address);
                 UDP(const std::string& ip, const unsigned short& port);
                 ~UDP();
                 bool open();
+
+                inline void addRecipient(const ::Con_Man::Socket::Address& address) { m_Recipients.push_back(address); }
+                inline void addRecipient(const std::string& ip, const unsigned short& port) {m_Recipients.push_back(*new ::Con_Man::Socket::Address(ip, port)); }
+                inline ::Con_Man::Socket::Address getRecipient(const unsigned int& ID) const { return m_Recipients.at(ID); }
+                ::Con_Man::Socket::Address getRecipient(const std::string& ip, const unsigned short& port) const;
+
+                inline void receive_from(unsigned int ID, const std::function<void(char*)>& call) { receive_from(getRecipient(ID), call); }
+                void receive_from(const ::Con_Man::Socket::Address& sender, const std::function<void(char*)>& call);
+                void receive_anon(const std::function<void(char*)>& call);
+                ::Con_Man::Socket::Address receive_unknown(const std::function<void(char*)>& call);
+
+                // TODO: send to all / send by addr / send by ID
+                // TODO: listen from
+                // TODO: get message
                 
                 bool open(const std::string& ip, const unsigned short& port) override;
                 void disable(const unsigned int& level) override;
                 void close() override;
                 void send(const char*& data) const override;
-                void receive(const std::function<void(char*)>& call) const override;
+                inline void receive(const std::function<void(char*)>& call) override { receive_unknown(call); }
                 void listen(const std::function<void(char*)> &call) override;
                 inline void ignore() override { m_Listening = false; };
                 inline bool isOpen() const override { return m_Open; };

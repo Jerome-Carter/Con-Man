@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "easylogging++.h"
+#include "../easylogging/easylogging++.h"
 
 #include <string>
 

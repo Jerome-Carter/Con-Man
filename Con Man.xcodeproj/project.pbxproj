@@ -31,7 +31,7 @@
 		1A16E4BD1E79F5860068212B /* easylogging++.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "easylogging++.cc"; sourceTree = "<group>"; };
 		1A16E4BE1E79F5860068212B /* easylogging++.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "easylogging++.h"; sourceTree = "<group>"; };
 		1A16E4C91E7B6FE20068212B /* address.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = address.h; sourceTree = "<group>"; };
-		1A16E4CC1E7CA2380068212B /* socket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = socket.h; sourceTree = "<group>"; };
+		1A16E4CC1E7CA2380068212B /* socket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = socket.h; path = "Con Man/src/adapters/socket.h"; sourceTree = SOURCE_ROOT; };
 		1A16E4CD1E7CCF8A0068212B /* address.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = address.cpp; sourceTree = "<group>"; };
 		1A16E4CF1E7D93190068212B /* udp_socket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = udp_socket.h; sourceTree = "<group>"; };
 		1A16E4D01E7D97400068212B /* udp_socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = udp_socket.cpp; sourceTree = "<group>"; };
@@ -80,7 +80,6 @@
 				1A16E4BD1E79F5860068212B /* easylogging++.cc */,
 				1A16E4BE1E79F5860068212B /* easylogging++.h */,
 			);
-			name = easylogging;
 			path = easylogging;
 			sourceTree = "<group>";
 		};
@@ -91,7 +90,6 @@
 				1A16E4CD1E7CCF8A0068212B /* address.cpp */,
 				1A16E4C91E7B6FE20068212B /* address.h */,
 			);
-			name = src;
 			path = src;
 			sourceTree = "<group>";
 		};
@@ -101,7 +99,6 @@
 				1A16E4CB1E7CA1D90068212B /* socket */,
 				1A16E4CC1E7CA2380068212B /* socket.h */,
 			);
-			name = adapters;
 			path = adapters;
 			sourceTree = "<group>";
 		};
@@ -111,7 +108,6 @@
 				1A16E4D01E7D97400068212B /* udp_socket.cpp */,
 				1A16E4CF1E7D93190068212B /* udp_socket.h */,
 			);
-			name = socket;
 			path = socket;
 			sourceTree = "<group>";
 		};

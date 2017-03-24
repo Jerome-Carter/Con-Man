@@ -6,10 +6,10 @@
 //  Copyright © 2017 James Carter. All rights reserved.
 //
 
-#include "address.h"
-#include "udp_socket.h"
+#include "src/address.h"
+#include "src/adapters/socket/udp_socket.h"
 
-#include "easylogging++.h"
+#include "easylogging/easylogging++.h"
 
 INITIALIZE_EASYLOGGINGPP
 
