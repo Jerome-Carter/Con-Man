@@ -10,7 +10,8 @@
 		1A16E4B61E79F39D0068212B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A16E4B51E79F39D0068212B /* main.cpp */; };
 		1A16E4BF1E79F5860068212B /* easylogging++.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1A16E4BD1E79F5860068212B /* easylogging++.cc */; };
 		1A16E4CE1E7CCF8A0068212B /* address.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A16E4CD1E7CCF8A0068212B /* address.cpp */; };
-		1A16E4D11E7D97400068212B /* udp_socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A16E4D01E7D97400068212B /* udp_socket.cpp */; };
+		1A16E4D11E7D97400068212B /* udp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A16E4D01E7D97400068212B /* udp.cpp */; };
+		1A87031A1E8792C600038076 /* tcp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8703191E8792C600038076 /* tcp.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,8 +34,10 @@
 		1A16E4C91E7B6FE20068212B /* address.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = address.h; sourceTree = "<group>"; };
 		1A16E4CC1E7CA2380068212B /* socket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = socket.h; path = "Con Man/src/adapters/socket.h"; sourceTree = SOURCE_ROOT; };
 		1A16E4CD1E7CCF8A0068212B /* address.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = address.cpp; sourceTree = "<group>"; };
-		1A16E4CF1E7D93190068212B /* udp_socket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = udp_socket.h; sourceTree = "<group>"; };
-		1A16E4D01E7D97400068212B /* udp_socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = udp_socket.cpp; sourceTree = "<group>"; };
+		1A16E4CF1E7D93190068212B /* udp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = udp.h; sourceTree = "<group>"; };
+		1A16E4D01E7D97400068212B /* udp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = udp.cpp; sourceTree = "<group>"; };
+		1A8703181E87154000038076 /* tcp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tcp.h; sourceTree = "<group>"; };
+		1A8703191E8792C600038076 /* tcp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tcp.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,8 +108,10 @@
 		1A16E4CB1E7CA1D90068212B /* socket */ = {
 			isa = PBXGroup;
 			children = (
-				1A16E4D01E7D97400068212B /* udp_socket.cpp */,
-				1A16E4CF1E7D93190068212B /* udp_socket.h */,
+				1A16E4D01E7D97400068212B /* udp.cpp */,
+				1A16E4CF1E7D93190068212B /* udp.h */,
+				1A8703191E8792C600038076 /* tcp.cpp */,
+				1A8703181E87154000038076 /* tcp.h */,
 			);
 			path = socket;
 			sourceTree = "<group>";
@@ -168,7 +173,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A16E4D11E7D97400068212B /* udp_socket.cpp in Sources */,
+				1A16E4D11E7D97400068212B /* udp.cpp in Sources */,
+				1A87031A1E8792C600038076 /* tcp.cpp in Sources */,
 				1A16E4B61E79F39D0068212B /* main.cpp in Sources */,
 				1A16E4CE1E7CCF8A0068212B /* address.cpp in Sources */,
 				1A16E4BF1E79F5860068212B /* easylogging++.cc in Sources */,

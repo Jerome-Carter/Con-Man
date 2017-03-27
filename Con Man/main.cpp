@@ -7,7 +7,8 @@
 //
 
 #include "src/address.h"
-#include "src/adapters/socket/udp_socket.h"
+#include "src/adapters/socket/tcp.h"
+#include "src/adapters/socket/udp.h"
 
 #include "easylogging/easylogging++.h"
 
@@ -17,9 +18,10 @@ using namespace Con_Man;
 
 int main(int argc, const char * argv[]) {
     LOG(INFO) << "Con Man started!";
-    Adapters::Socket::UDP udp(*new Socket::Address("0", 0));
-    udp.open();
+    Adapters::Socket::TCP tcp(*new Socket::Address("0", 0));
+    tcp.create();
+    tcp.getInfo();
     std::cin.get();
-    udp.close();
+    tcp.close();
     return 0;
 }

@@ -1,5 +1,5 @@
 //
-//  udp_socket.h
+//  udp.h
 //  Con Man
 //
 //  Created by James Carter on 3/18/17.
@@ -45,7 +45,7 @@ namespace Con_Man {
                 inline void addRecipient(const std::string& ip, const unsigned short& port) {m_Recipients.push_back(*new ::Con_Man::Socket::Address(ip, port)); }
                 inline ::Con_Man::Socket::Address getRecipient(const unsigned int& ID) const { return m_Recipients.at(ID); }
                 ::Con_Man::Socket::Address getRecipient(const std::string& ip, const unsigned short& port) const;
-                bool recipientExists(const std::string& ip, const unsigned short& port) const;
+                int recipientExists(const std::string& ip, const unsigned short& port) const;
 
                 inline void receive_from(const unsigned int& ID, const std::function<void(char*)>& call) { receive_from(getRecipient(ID), call); }
                 void receive_from(const ::Con_Man::Socket::Address& sender, const std::function<void(char*)>& call);
@@ -57,18 +57,21 @@ namespace Con_Man {
 
                 inline void listen_to(const unsigned int& ID, const std::function<void(char*)> &call) { listen_to(m_Recipients.at(ID), call); }
                 void listen_to(const ::Con_Man::Socket::Address& sender, const std::function<void(char*)> &call);
-                
-                bool open(const std::string& ip, const unsigned short& port) override;
+
                 void disable(const unsigned int& level) override;
                 void close() override;
                 void send(const char*& data) const override;
                 inline void receive(const std::function<void(char*)>& call) override { receive_unknown(call); }
                 void listen(const std::function<void(char*)> &call) override;
-                inline void ignore() override { m_Listening = false; };
-                inline bool isOpen() const override { return m_Open; };
-                inline bool isListening() const override { return m_Listening; };
-                inline std::string getIp() const override { return m_Address->getIp(); };
-                inline unsigned short getPort() const override { return m_Address->getPort(); };
+                inline void ignore() override { m_Listening = false; }
+                inline bool isOpen() const override { return m_Open; }
+                inline bool isListening() const override { return m_Listening; }
+                inline std::string getIp() const override { return m_Address->getIp(); }
+                inline unsigned short getPort() const override { return m_Address->getPort(); }
+                inline void getInfo() const override { system(std::string(std::string("lsof -i :") + std::to_string(getPort())).c_str()); }
+
+            private:
+                bool open(const std::string& ip, const unsigned short& port) override;
             };
         }
     }

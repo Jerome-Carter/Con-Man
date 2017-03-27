@@ -29,7 +29,7 @@ namespace Con_Man {
             inline sockaddr_in getAddress() const { return m_Address; }
             inline std::string getIp() const { return inet_ntoa(m_Address.sin_addr); }
             inline unsigned short getPort() const { return ntohs(m_Address.sin_port); }
-            inline void setPort(const unsigned short& port) { m_Address.sin_port = htons(port); };
+            inline void setPort(const unsigned short& port) { m_Address.sin_port = htons(port); }
             inline std::string getAddressInfo() const { return std::string(inet_ntoa(m_Address.sin_addr)) + ":" + std::to_string(ntohs(m_Address.sin_port)); }
         };
     }
