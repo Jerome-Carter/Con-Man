@@ -26,7 +26,7 @@ namespace Con_Man {
                 virtual bool isListening() const = 0;
                 virtual std::string getIp() const = 0;
                 virtual unsigned short getPort() const = 0;
-                virtual void getInfo() const = 0;
+                virtual inline void getInfo() const { system(std::string(std::string("lsof -i :") + std::to_string(getPort())).c_str()); }
             };
         }
     }

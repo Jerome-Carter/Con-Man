@@ -25,7 +25,7 @@
 namespace Con_Man {
     namespace Adapters {
         namespace Socket {
-            class UDP : Interfaces::Socket {
+            class UDP : public Interfaces::Socket {
             private:
                 int m_FD;
                 bool m_Open = false;
