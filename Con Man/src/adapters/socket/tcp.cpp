@@ -20,6 +20,7 @@ namespace Con_Man {
             TCP::~TCP() {
                 close();
                 delete m_Address;
+                delete m_Listener;
             }
             bool TCP::create() {
                 return open(m_Address->getIp(), m_Address->getPort());
@@ -41,12 +42,13 @@ namespace Con_Man {
                 }
                 if (port == 0) m_Address->setPort(ntohs(address.sin_port));
                 LOG(INFO) << "Socket created at " << m_Address->getIp() << ":" << m_Address->getPort();
+                m_Open = true;
                 return true;
             }
             void TCP::close() {
                 if (m_Open) {
                     m_Open = false;
-                    if (m_Listening) m_Listening = false;
+                    if (m_Listening) deafen();
                     if (::close(m_FD) < 0) LOG(ERROR) << "Failed to close socket: " << strerror(errno);
                 }
             }
@@ -56,16 +58,44 @@ namespace Con_Man {
                     shutdown(m_FD, level);
                 } else LOG(ERROR) << "Socket at " << getIp() << ":" << getPort() << " couldn't be disabled (invalid level provided)";
             }
-//            void TCP::listen(const std::function<void(char*)> &call) {
-//                if (!m_Open) {
-//                    m_Open = true;
-//                    ::listen(m_FD, 10);
-//                    struct sockaddr_in address;
-//                    socklen_t addr_len = sizeof(address);
-//                    // TODO: Deal with connection limit and call param
-//                    m_ConnectionAddressList[accept(m_FD, (struct sockaddr*)&address, &addr_len)] = *new ::Con_Man::Socket::Address(address);
-//                }
-//            };
+            void TCP::connect(const ::Con_Man::Socket::Address& address) {
+                struct sockaddr_in addr = address.getAddress();
+                if (::connect(m_FD, (struct sockaddr*)&addr, sizeof(addr)) < 0) LOG(ERROR) << getIp() << ":" << getPort() << "->connect(" << address.getAddressInfo() << ") failed: " << strerror(errno);
+            }
+            void TCP::listen(const std::function<void(::Con_Man::Socket::Address)> &call) {
+                if (m_Open && !m_Listening) {
+                    m_Listening = true;
+                    if (::listen(m_FD, 10) < 0) LOG(ERROR) << "Failed to listen at " << getIp() << ":" << getPort() << " : " << strerror(errno);
+                    LOG(INFO) << "Now listening at " << getIp() << ":" << getPort();
+                    m_Listener = new std::thread([this, &call](){
+                        while (m_Listening) {
+                            int connector_fd;
+                            struct sockaddr_in connector_address;
+                            socklen_t address_len = sizeof(connector_address);
+                            // TODO: Deal with connection limit and call param
+                            if ((connector_fd = accept(m_FD, (struct sockaddr*)&connector_address, &address_len)) < 0)
+                                LOG(ERROR) << "Socket at " << getIp() << ":" << getPort() << " failed to accept connection: " << strerror(errno);
+                            else {
+                                ::Con_Man::Socket::Address *address = new ::Con_Man::Socket::Address(connector_address);
+                                LOG(INFO) << "Listener received a connection request from " << address->getIp() << ":" << address->getPort();
+                                call(*address);
+                                m_ConnectionAddressList[connector_fd] = address;
+//                                for (std::map<int, ::Con_Man::Socket::Address*>::iterator it = m_ConnectionAddressList.begin(); it != m_ConnectionAddressList.end(); ++it)
+//                                    LOG(INFO) << it->second->getAddressInfo();
+                            }
+                        }
+                    });
+                } else{
+                    LOG(ERROR) << "Failed to initialize socket listener at " << getIp() << ":" << getPort();
+                    LOG(WARNING) << "Ensure that the socket is running and not already listening! ( STATUS: " << (m_Open ? "Open" : "Closed") << "; " << (m_Listening ? "Listening" : "Not Listening") << " )";
+                }
+            }
+            void TCP::deafen() {
+                if (m_Listening) {
+                    m_Listening = false;
+                    m_Listener->join();
+                }
+            }
         }
     }
 }

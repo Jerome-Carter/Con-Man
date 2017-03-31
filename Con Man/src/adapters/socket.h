@@ -20,7 +20,7 @@ namespace Con_Man {
                 virtual void close() = 0;
                 virtual void send(const char*& data) const = 0;
                 virtual void receive(const std::function<void(char*)>& call) = 0;
-                virtual void listen(const std::function<void(char*)> &call) = 0;
+                virtual void listen(const std::function<void(char*)>& call) = 0;
                 virtual void ignore() = 0;
                 virtual bool isOpen() const = 0;
                 virtual bool isListening() const = 0;

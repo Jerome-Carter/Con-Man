@@ -10,7 +10,10 @@
 
 namespace Con_Man {
     namespace Socket {
-        Address::Address(const struct sockaddr_in& address) : m_Address(address) {}
+        Address::Address(const struct sockaddr_in& address) : m_Address(address) {
+            m_IP = inet_ntoa(m_Address.sin_addr);
+            m_Port = ntohs(m_Address.sin_port);
+        }
         Address::Address(const std::string& ip, const unsigned short& port) {
             struct sockaddr_in address;
             memset((void*)&address, 0, sizeof(address));
@@ -18,6 +21,8 @@ namespace Con_Man {
             address.sin_addr.s_addr = inet_addr(ip.c_str());
             address.sin_port = htons(port);
             m_Address = address;
+            m_IP = inet_ntoa(m_Address.sin_addr);
+            m_Port = ntohs(m_Address.sin_port);
         }
     }
 }

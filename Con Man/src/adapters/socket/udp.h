@@ -68,7 +68,6 @@ namespace Con_Man {
                 inline bool isListening() const override { return m_Listening; }
                 inline std::string getIp() const override { return m_Address->getIp(); }
                 inline unsigned short getPort() const override { return m_Address->getPort(); }
-                inline void getInfo() const override { system(std::string(std::string("lsof -i :") + std::to_string(getPort())).c_str()); }
 
             private:
                 bool open(const std::string& ip, const unsigned short& port) override;
